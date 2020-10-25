@@ -9,15 +9,13 @@ let maxScore;
 let nextBeat;
 let displayedBeats = [];
 let playRate = 1;
+let scaleSize;
 
 
 function preload() {
-  //data = loadJSON("2020-03-rrigamondi/assets/beatmap.json");
-  //clap = loadSound("2020-03-rrigamondi/assets/clap.wav")
-  //ievan = loadSound("2020-03-rrigamondi/assets/ievan_polkka.m4a");
-  data = loadJSON("/assets/beatmap.json");
-  clap = loadSound("/assets/clap.wav")
-  ievan = loadSound("/assets/ievan_polkka.m4a");
+  data = loadJSON("2020-03-rrigamondi/assets/beatmap.json");
+  clap = loadSound("2020-03-rrigamondi/assets/clap.wav")
+  ievan = loadSound("2020-03-rrigamondi/assets/ievan_polkka.m4a");
 }
 
 function setup() {
@@ -64,6 +62,14 @@ function setup() {
 
 function draw() {
   background('black');
+
+  if (windowHeight <= windowWidth*1.5){
+    scaleSize = windowHeight/2880*2+0.2;
+  }
+  else {
+    scaleSize = windowWidth/5120*2+0.2;
+  }
+
 
 
   //tutorial
@@ -153,7 +159,7 @@ class Beat {
     if (this.id != beatmap.length-1){
       noFill();
       stroke(color('rgba(255,255,255,0.4)'));
-      strokeWeight(10);
+      strokeWeight(10*scaleSize);
       if(this.id >= 1 && this.id <= beatmap.length-3){
         curve(beatmap[this.id-1].x,beatmap[this.id-1].y,this.x,this.y,beatmap[this.id+1].x,beatmap[this.id+1].y,beatmap[this.id+2].x,beatmap[this.id+2].y)
       }
@@ -163,7 +169,7 @@ class Beat {
     //beat text
     push();
       textAlign(CENTER, CENTER);
-      textSize(55);
+      textSize(55*scaleSize);
       textFont('Rubik Mono One')
       fill(this.color);
       noStroke();
@@ -173,9 +179,9 @@ class Beat {
     //beat ext circle
     push();
       noFill();
-      strokeWeight(8);
+      strokeWeight(8*scaleSize);
       stroke(this.color);
-      ellipse(this.x, this.y, 100);
+      ellipse(this.x, this.y, 100*scaleSize);
     pop();
 
     //beat int circle
@@ -187,8 +193,8 @@ class Beat {
       else{
         stroke('white');
       }
-      strokeWeight(8);
-      ellipse(this.x, this.y, this.countPercent*playRate)
+      strokeWeight(8*scaleSize);
+      ellipse(this.x, this.y, this.countPercent*playRate*scaleSize)
       console.log(this.x);
     pop();
   }
@@ -225,9 +231,9 @@ class Beat {
           fill(this.color);
           noStroke();
           textFont('Rubik Mono One');
-          textSize(20);
+          textSize(20*scaleSize);
           textAlign(CENTER, CENTER);
-          text("Cool!", this.x, this.y-50);
+          text("Cool!", this.x, this.y-80);
         pop();
       }
     else if (songTime >= this.time + beatInput && songTime <= this.time + beatInput + 0.3 && this.beatStatus == null){
@@ -237,9 +243,9 @@ class Beat {
           fill(this.color);
           noStroke();
           textFont('Rubik Mono One');
-          textSize(20);
+          textSize(20*scaleSize);
           textAlign(CENTER, CENTER);
-          text("Miss", this.x, this.y-50);
+          text("Miss", this.x, this.y-80);
         pop();
     }
     else if (songTime <= this.time + beatInput + 0.3 && this.beatStatus == 'wrong'){
@@ -249,9 +255,9 @@ class Beat {
           fill(this.color);
           noStroke();
           textFont('Rubik Mono One');
-          textSize(20);
+          textSize(20*scaleSize);
           textAlign(CENTER, CENTER);
-          text("Wrong", this.x, this.y-50);
+          text("Wrong", this.x, this.y-80);
         pop();
     }
   }
