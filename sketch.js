@@ -12,9 +12,9 @@ let playRate = 1;
 
 
 function preload() {
-  data = loadJSON("/assets/beatmap.json");
-  clap = loadSound("/assets/clap.wav")
-  ievan = loadSound("/assets/ievan_polkka.m4a");
+  data = loadJSON("//assets/beatmap.json");
+  clap = loadSound("//assets/clap.wav")
+  ievan = loadSound("//assets/ievan_polkka.m4a");
 }
 
 function setup() {
