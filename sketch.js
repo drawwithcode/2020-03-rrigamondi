@@ -271,7 +271,7 @@ class Beat {
   }
 
   gameInput(){ //checks for input and whether it's correct
-    if (songTime >= this.time - beatInput && keyIsPressed == true && this.beatStatus == null && key == this.type){ //correct
+    if (songTime >= this.time - beatInput && keyIsPressed == true && this.beatStatus == null && key.toLowerCase() == this.type){ //correct
         this.beatStatus = 'correct';
         score = score + 1000;
         /*console.log(score);
@@ -290,7 +290,7 @@ class Beat {
       }
     }*/
     else { //voids other presses
-      key = null;
+      key = "null";
     }
   }
 
@@ -361,15 +361,15 @@ class Beat {
 
 //start the game and play the sound effects when pressing
 function keyTyped(){
-  if (key == 'x' || key == 's'){
+  if (key.toLowerCase() == 'x' || key.toLowerCase() == 's'){
     if (ievan.isPlaying() == false && gameStarted == false){
       analyzer = new p5.Amplitude();
       analyzer.setInput(ievan);
 
-      if (key == 's'){ //normal mode
+      if (key.toLowerCase() == 's'){ //normal mode
         playRate = 1;
       }
-      else if (key == 'x'){ //hard mode
+      else if (key.toLowerCase() == 'x'){ //hard mode
         playRate = 1.4;
         beatInput = 0.15;
       }
