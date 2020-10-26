@@ -68,6 +68,7 @@ function setup() {
 function draw() {
   background('black');
 
+
   if (windowHeight <= windowWidth*1.5){
     scaleSize = windowHeight/2880*2+0.2;
   }
