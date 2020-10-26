@@ -13,21 +13,31 @@ let playRate = 1;
 let scaleSize;
 let scorePercent;
 let songPercent;
-let scoreColor = 'white';
+
+let colorGreen = 'rgb(130,230,0)';
+let colorBlue = 'rgb(41,224,207)';
+let colorRed = 'rgb(255,0,150)';
+let colorPurple = 'rgb(120,60,120))';
+let colorGray = 'rgb(120,120,120)';
+let colorB = 'black';
+let colorW = 'white';
+
+let scoreColor = colorW;
 
 
 function preload() {
-  data = loadJSON("/2020-03-rrigamondi/assets/beatmap.json");
-  clap = loadSound("/2020-03-rrigamondi/assets/clap.wav")
-  ievan = loadSound("/2020-03-rrigamondi/assets/ievan_polkka.m4a");
-  //data = loadJSON("/assets/beatmap.json");
-  //clap = loadSound("/assets/clap.wav")
-  //ievan = loadSound("/assets/ievan_polkka.m4a");
+  //data = loadJSON("/2020-03-rrigamondi/assets/beatmap.json");
+  //clap = loadSound("/2020-03-rrigamondi/assets/clap.wav")
+  //ievan = loadSound("/2020-03-rrigamondi/assets/ievan_polkka.m4a");
+  data = loadJSON("/assets/beatmap.json");
+  clap = loadSound("/assets/clap.wav");
+  ievan = loadSound("/assets/ievan_polkka.m4a");
+  miku = loadImage("/assets/miku.png");
 }
 
 function setup() {
   createCanvas(windowWidth,windowHeight);
-  angleMode(DEGREES)
+  angleMode(DEGREES);
 
   //set possible x/y positions
   var p3 = width/20*3;
@@ -66,8 +76,7 @@ function setup() {
 }
 
 function draw() {
-  background('black');
-
+  background(colorB);
 
   if (windowHeight <= windowWidth*1.5){
     scaleSize = windowHeight/2880*2+0.2;
@@ -81,16 +90,18 @@ function draw() {
     push();
     textAlign(CENTER,CENTER);
 
-    fill('aqua');
+    fill(colorBlue);
     textFont('Rubik Mono One');
     textSize(60);
     text('Project DIVA\np5.JS', width/2, height/2-70);
 
-    fill('white');
+    transp = "rgba(255,255,255," + map(sin(frameCount*1.6), -1, 1, 0.25, 1) +")";
+    fill(transp);
     textFont('Rubik');
     textSize(20);
-    text('Press X or S to start', width/2, height/2+70);
+    text('press S for normal mode\npress X for hard mode [1.4x]', width/2, height/2+70);
 
+    fill(colorW);
     textSize(20);
     textAlign(CENTER,BOTTOM);
     text('♫ Ievan Polkka ♫\narrangement by Otomania\nfeaturing Hatsune Miku', width/2, height-80);
@@ -100,6 +111,20 @@ function draw() {
   //on screen display
   if (gameStarted){
 
+    //amp Miku
+    push();
+      let amp = analyzer.getLevel();
+      let mikuDelta = map(amp, 0, 1, 0.7, 3)
+      let mikuX = miku.width*mikuDelta;
+      let mikuY = miku.height*mikuDelta;
+
+      imageMode(CENTER);
+      image(miku, width/2, height/2, mikuX, mikuY);
+      fill('rgba(0,0,0,0.35)');
+      rectMode(CENTER);
+      rect(width/2,height/2,mikuX, mikuY);
+    pop();
+
     //run beatmap
     for(let i = 0; i < beatmap.length; i++) {
         beatmap[i].run();
@@ -107,7 +132,7 @@ function draw() {
 
     //time elapsed
     push();
-      fill('aqua');
+      fill(colorBlue);
       songTime = ievan.currentTime();
       songPercent = songTime / ievan.duration();
       rect (0,0,songPercent*width,26);
@@ -118,10 +143,10 @@ function draw() {
       scorePercent = score / maxScore / 10;
       //console.log(scorePercent);
       if (scorePercent == 100){
-        scoreColor =  'magenta';
+        scoreColor =  colorRed;
       }
       else if (scorePercent >= 75){
-        scoreColor = 'rgb(130,230,0)';
+        scoreColor = colorGreen;
       }
       fill(scoreColor);
       text('SCORE / ' + score, 60, height-60);
@@ -137,7 +162,7 @@ function draw() {
 }
 
 function resultsScreen(){
-  background('black');
+  background(colorB);
   push();
     let rank
     if (scorePercent == 100){
@@ -154,20 +179,20 @@ function resultsScreen(){
     }
     else{
       rank = "F - Fail..."
-      scoreColor = 'rgb(120,60,120)';
+      scoreColor = colorPurple;
     }
     textFont('Rubik Mono One');
     textSize(60);
     textAlign(CENTER,BOTTOM);
 
-    fill('white');
+    fill(colorW);
     text('Results!\nRank:', width/2, height/12*5);
 
     fill(scoreColor);
     text(rank, width/2, height/12*7)
 
     //song info
-    fill('white');
+    fill(colorW);
     textFont('Rubik');
     textSize(20);
     textAlign(CENTER,BOTTOM);
@@ -179,9 +204,9 @@ function resultsScreen(){
 function addBeats(id, type, time, posX, posY) {
   let beatColor;
   if (type == "x") {
-    beatColor = "magenta";
+    beatColor = colorRed;
   } else {
-    beatColor = "aqua";
+    beatColor = colorBlue
   }
   const newBeat = new Beat(id, type, time, posX, posY, beatColor)
   beatmap.push(newBeat);
@@ -192,7 +217,7 @@ class Beat {
   constructor(temp_id, temp_type, temp_time, temp_posX, temp_posY, temp_beatColor) {
     this.id = temp_id;
     this.type = temp_type;
-    this.time = temp_time;
+    this.time = temp_time+0.1
     this.x = temp_posX;
     this.y = temp_posY;
     this.color = temp_beatColor;
@@ -219,10 +244,10 @@ class Beat {
     push();
       noFill();
       strokeWeight(12*scaleSize);
-      stroke('black');
+      stroke(colorB);
       ellipse(this.x, this.y, 100*scaleSize+6);
       strokeWeight(8*scaleSize);
-      stroke('white');
+      stroke(colorW);
       ellipse(this.x, this.y, 100*scaleSize);
     pop();
 
@@ -241,11 +266,10 @@ class Beat {
       textSize(55*scaleSize);
       textFont('Rubik Mono One')
       fill(this.color);
-      stroke('black');
+      stroke(colorB);
       strokeWeight(8*scaleSize);
       text(this.type, this.x,this.y+5);
     pop();
-
   }
 
   gameInput(){ //checks for input and whether it's correct
@@ -275,7 +299,7 @@ class Beat {
   result(){
     if (songTime <= this.time + beatInput + 0.3 && this.beatStatus == 'correct'){
       //correct beat effect
-        this.color = 'rgb(130,230,0)';
+        this.color = colorGreen;
         push();
           fill(this.color);
           noStroke();
@@ -287,7 +311,7 @@ class Beat {
       }
     else if (songTime >= this.time + beatInput && songTime <= this.time + beatInput + 0.3 && this.beatStatus == null){
       //miss beat effect
-        this.color = 'rgb(120,120,120)';
+        this.color = colorGray;
         this.beatStatus = 'miss';
         push();
           fill(this.color);
@@ -300,7 +324,7 @@ class Beat {
     }
     else if (songTime <= this.time + beatInput + 0.3 && this.beatStatus == 'wrong'){
       //wrong beat effect
-        this.color = 'rgb(120,60,120)';
+        this.color = colorPurple;
         push();
           fill(this.color);
           noStroke();
@@ -316,7 +340,7 @@ class Beat {
       //songTime = ievan.currentTime();
       //let songPercent = songTime / ievan.duration();
       //rect (0,0,songPercent*width,30);
-        stroke('white');
+        stroke(colorRed);
         noFill();
         strokeWeight(4);
         line(this.timePercent*width-3,32,this.timePercent*width+3,38);
@@ -340,23 +364,25 @@ class Beat {
 //start the game and play the sound effects when pressing
 function keyTyped(){
   if (key == 'x' || key == 's'){
-  if (ievan.isPlaying() == false && gameStarted == false){
-    ievan.play();
-    //ievan.rate(2);
-    gameStarted = true;
-    //console.log("game started")
-  }
-  else {
-  clap.play();
-}}
-  else if (key == 'd') { //debug change song speed
-      playRate = 4
-      ievan.rate(playRate);
+    if (ievan.isPlaying() == false && gameStarted == false){
+      analyzer = new p5.Amplitude();
+      analyzer.setInput(ievan);
 
-  }
-  else if (key == 'c') { //debug change song speed
-      playRate = 1
+      if (key == 's'){ //normal mode
+        playRate = 1;
+      }
+      else if (key == 'x'){ //hard mode
+        playRate = 1.4;
+        beatInput = 0.15;
+      }
+
       ievan.rate(playRate);
+      ievan.play();
+      gameStarted = true;
+    }
+    else {
+      clap.play();
+    }
   }
 }
 
