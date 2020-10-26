@@ -13,6 +13,7 @@ let playRate = 1;
 let scaleSize;
 let scorePercent;
 let songPercent;
+let songDelay = 0.1;
 
 let colorGreen = 'rgb(130,230,0)';
 let colorBlue = 'rgb(41,224,207)';
@@ -26,14 +27,14 @@ let scoreColor = colorW;
 
 
 function preload() {
-  data = loadJSON("/2020-03-rrigamondi/assets/beatmap.json");
-  clap = loadSound("/2020-03-rrigamondi/assets/clap.wav")
-  ievan = loadSound("/2020-03-rrigamondi/assets/ievan_polkka.m4a");
-  miku = loadImage("/2020-03-rrigamondi/assets/miku.png");
-  //data = loadJSON("/assets/beatmap.json");
-  //clap = loadSound("/assets/clap.wav");
-  //ievan = loadSound("/assets/ievan_polkka.m4a");
-  //miku = loadImage("/assets/miku.png");
+  //data = loadJSON("/2020-03-rrigamondi/assets/beatmap.json");
+  //clap = loadSound("/2020-03-rrigamondi/assets/clap.wav")
+  //ievan = loadSound("/2020-03-rrigamondi/assets/ievan_polkka.m4a");
+  //miku = loadImage("/2020-03-rrigamondi/assets/miku.png");
+  data = loadJSON("./assets/beatmap.json");
+  clap = loadSound("./assets/clap.wav");
+  ievan = loadSound("./assets/ievan_polkka.m4a");
+  miku = loadImage("./assets/miku.png");
 }
 
 function setup() {
@@ -123,7 +124,7 @@ function draw() {
       image(miku, width/2, height/2, mikuX, mikuY);
       fill('rgba(0,0,0,0.35)');
       rectMode(CENTER);
-      rect(width/2,height/2,mikuX, mikuY);
+      rect(width/2, height/2, mikuX, mikuY);
     pop();
 
     //run beatmap
@@ -151,7 +152,7 @@ function draw() {
       }
       fill(scoreColor);
       text('SCORE / ' + score, 60, height-60);
-      rect (0,height-15,scorePercent*width/100,30);
+      rect (0, height-15, scorePercent*width/100, 30);
     pop();
   }
 
@@ -165,38 +166,38 @@ function draw() {
 function resultsScreen(){
   background(colorB);
   push();
-    let rank
+    let rank;
     if (scorePercent == 100){
-      rank = "S - Perfect!!"
+      rank = "S - Perfect!!";
     }
     else if (scorePercent >= 85){
-      rank = "A - Cool!"
+      rank = "A - Cool!";
     }
     else if (scorePercent >= 75){
-      rank = "B - Good"
+      rank = "B - Good";
     }
     else if (scorePercent >= 60){
-      rank = "C - Passed"
+      rank = "C - Passed";
     }
     else{
-      rank = "F - Fail..."
+      rank = "F - Fail...";
       scoreColor = colorPurple;
     }
     textFont('Rubik Mono One');
     textSize(60);
-    textAlign(CENTER,BOTTOM);
+    textAlign(CENTER, BOTTOM);
 
     fill(colorW);
     text('Results!\nRank:', width/2, height/12*5);
 
     fill(scoreColor);
-    text(rank, width/2, height/12*7)
+    text(rank, width/2, height/12*7);
 
     //song info
     fill(colorW);
     textFont('Rubik');
     textSize(20);
-    textAlign(CENTER,BOTTOM);
+    textAlign(CENTER, BOTTOM);
     text('♫ Ievan Polkka ♫\narrangement by Otomania\nfeaturing Hatsune Miku', width/2, height-80);
   pop();
 }
@@ -207,7 +208,7 @@ function addBeats(id, type, time, posX, posY) {
   if (type == "x") {
     beatColor = colorRed;
   } else {
-    beatColor = colorBlue
+    beatColor = colorBlue;
   }
   const newBeat = new Beat(id, type, time, posX, posY, beatColor)
   beatmap.push(newBeat);
@@ -218,7 +219,7 @@ class Beat {
   constructor(temp_id, temp_type, temp_time, temp_posX, temp_posY, temp_beatColor) {
     this.id = temp_id;
     this.type = temp_type;
-    this.time = temp_time+0.1
+    this.time = temp_time+songDelay;
     this.x = temp_posX;
     this.y = temp_posY;
     this.color = temp_beatColor;
@@ -227,7 +228,7 @@ class Beat {
     this.countPercent = 0;
     this.count = 0;
 
-    this.timePercent = this.time / ievan.duration();
+    this.timePercent = this.time/ievan.duration();
   }
   display() { //builds the beat visualization
     push();
@@ -236,9 +237,9 @@ class Beat {
       stroke(color('rgba(255,255,255,0.4)'));
       strokeWeight(10*scaleSize);
       if(this.id >= 1 && this.id <= beatmap.length-3){
-        curve(beatmap[this.id-1].x,beatmap[this.id-1].y,this.x,this.y,beatmap[this.id+1].x,beatmap[this.id+1].y,beatmap[this.id+2].x,beatmap[this.id+2].y)
+        curve(beatmap[this.id-1].x, beatmap[this.id-1].y, this.x, this.y, beatmap[this.id+1].x, beatmap[this.id+1].y, beatmap[this.id+2].x, beatmap[this.id+2].y)
       }
-      else{line(this.x,this.y,beatmap[this.id+1].x,beatmap[this.id+1].y);}
+      else{line(this.x, this.y, beatmap[this.id+1].x, beatmap[this.id+1].y);}
     }
     pop();
     //beat ext circle
@@ -257,7 +258,7 @@ class Beat {
       noFill();
       stroke(this.color);
       strokeWeight(8*scaleSize);
-      ellipse(this.x, this.y, this.countPercent*playRate*scaleSize)
+      ellipse(this.x, this.y, this.countPercent*playRate*scaleSize);
       console.log(this.x);
     pop();
 
@@ -265,7 +266,7 @@ class Beat {
     push();
       textAlign(CENTER, CENTER);
       textSize(55*scaleSize);
-      textFont('Rubik Mono One')
+      textFont('Rubik Mono One');
       fill(this.color);
       stroke(colorB);
       strokeWeight(8*scaleSize);
@@ -358,7 +359,7 @@ class Beat {
       }
       this.gameInput();
     }
-    this.result()
+    this.result();
   }
 }
 
